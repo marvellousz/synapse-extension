@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Synapse",
+  "version": "0.0.1",
+  "description": "Save notes and clips to your Synapse memory.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Synapse",
+    "default_icon": { "16": "synapse.jpg", "48": "synapse.jpg", "128": "synapse.jpg" }
+  },
+  "icons": { "16": "synapse.jpg", "48": "synapse.jpg", "128": "synapse.jpg" },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "background": { "service_worker": "background.js" }
+}
