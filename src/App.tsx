@@ -8,6 +8,7 @@ import {
   buildCreateBody,
 } from "./api";
 import { captureVisibleTab, getCurrentTabUrl, getCurrentTabId, sendToBackground, dataUrlToFile } from "./extension";
+import { Brain, LogOut, Camera, Scissors, Globe, Youtube, FileText, Loader2, ArrowLeft, CheckCircle2, AlertCircle } from "lucide-react";
 
 type View = "welcome" | "login" | "app";
 
@@ -181,199 +182,238 @@ export default function App() {
     }
   };
 
-  const isCompact = view === "welcome" || view === "login";
-
   return (
-    <div
-      className={`w-[400px] bg-slate-900 text-slate-100 text-sm flex flex-col ${isCompact ? "min-h-[320px]" : "min-h-[500px]"}`}
-    >
-      <header className="px-4 py-3 border-b border-slate-700 shrink-0">
-        <h1 className="text-lg font-semibold text-white">synapse</h1>
+    <div className="w-[400px] bg-[#F8FAFC] flex flex-col min-h-[500px] grid-bg selection:bg-indigo-200">
+      {/* Header */}
+      <header className="px-4 py-4 bg-white border-b-2 border-black flex justify-between items-center shrink-0">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-indigo-600 border-2 border-black flex items-center justify-center rotate-[-3deg]">
+            <Brain className="text-white w-5 h-5" />
+          </div>
+          <h1 className="heading-brut text-xl tracking-tighter">synapse</h1>
+        </div>
+
+        {view === "app" && (
+          <button
+            onClick={handleLogout}
+            className="p-2 hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
+            title="Log Out"
+          >
+            <LogOut size={18} />
+          </button>
+        )}
       </header>
 
-      <div className={`overflow-y-auto p-4 ${isCompact ? "shrink-0" : "flex-1"} space-y-4`}>
+      <div className="flex-1 overflow-y-auto p-5 space-y-6">
         {view === "welcome" && (
-          <div className="py-6 px-2 flex flex-col items-center text-center">
-            <p className="text-slate-400 text-sm leading-relaxed max-w-[280px] mb-8">
-              Save screenshots, links, YouTube videos, and text to your second brain. Search and chat over everything you save.
-            </p>
+          <div className="py-10 flex flex-col items-center text-center space-y-8">
+            <div className="space-y-4">
+              <h2 className="heading-brut text-3xl">Capture Everything.</h2>
+              <p className="font-bold text-gray-500 text-xs uppercase tracking-widest leading-relaxed max-w-[280px]">
+                Save screenshots, links, and video streams to your second brain instantly.
+              </p>
+            </div>
+
             <button
-              type="button"
               onClick={() => setView("login")}
-              className="w-full max-w-[240px] py-3 rounded-xl font-semibold text-white transition-all hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-              style={{
-                background: "linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)",
-                boxShadow: "0 4px 14px rgba(59, 130, 246, 0.4)",
-              }}
+              className="brut-button w-full max-w-[280px] py-4 text-lg"
             >
-              Log in
+              ACCESS PORTAL
             </button>
           </div>
         )}
 
         {view === "login" && (
-          <form onSubmit={handleLogin} className="space-y-3">
+          <div className="space-y-6">
             <button
-              type="button"
               onClick={() => setView("welcome")}
-              className="text-slate-500 hover:text-slate-300 text-xs mb-2 cursor-pointer"
+              className="group flex items-center gap-2 font-black uppercase text-[10px] tracking-widest text-gray-400 hover:text-black transition-colors"
             >
-              ← Back
+              <ArrowLeft size={14} /> Back
             </button>
-            <label className="block text-slate-400 mb-1">Log in</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="email"
-              required
-              className="w-full px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="password"
-              required
-              className="w-full px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            {loginError && <p className="text-red-400 text-xs">{loginError}</p>}
-            <button
-              type="submit"
-              disabled={loginLoading}
-              className="w-full py-2.5 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
-            >
-              {loginLoading ? "…" : "Log in"}
-            </button>
-          </form>
+
+            <div className="brut-card p-6 bg-white space-y-4">
+              <h2 className="heading-brut text-2xl">Log In.</h2>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-1">
+                  <label className="block font-black uppercase text-[9px] tracking-widest text-gray-500">Email Address</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="ENTER EMAIL"
+                    required
+                    className="brut-input"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block font-black uppercase text-[9px] tracking-widest text-gray-500">Password</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="brut-input"
+                  />
+                </div>
+                {loginError && (
+                  <div className="p-3 bg-rose-50 border-2 border-rose-500 text-rose-700 text-[10px] font-black uppercase">
+                    {loginError}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={loginLoading}
+                  className="brut-button w-full py-3"
+                >
+                  {loginLoading ? <Loader2 className="animate-spin mx-auto" size={20} /> : "AUTHENTICATE"}
+                </button>
+              </form>
+            </div>
+          </div>
         )}
 
         {view === "app" && token && (
           <>
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400">logged in</span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="text-slate-500 hover:text-slate-300 text-xs"
-              >
-                log out
-              </button>
-            </div>
-
-            <div className="space-y-4 pt-2 border-t border-slate-700">
-              <label className="block text-slate-400 text-xs mb-1">optional title (for any action)</label>
+            {/* Title Section */}
+            <div className="space-y-2">
+              <label className="block font-black uppercase text-[10px] tracking-widest text-indigo-600">Memory Label (Optional)</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="optional title"
-                className="w-full px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
+                placeholder="WHAT IS THIS MEMORY?"
+                className="brut-input bg-white text-sm"
               />
             </div>
 
-            {/* 1. Screenshot */}
-            <section className="space-y-2">
-              <h2 className="text-white font-medium text-sm">screenshot</h2>
-              <p className="text-slate-400 text-xs">Capture the current page (full or a section) and save as an image memory.</p>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={handleSectionCapture}
-                  disabled={!!loading}
-                  className="flex-1 py-2.5 rounded-lg bg-slate-700 text-white font-medium hover:bg-slate-600 disabled:opacity-50 text-sm"
-                >
-                  {loading === "screenshot_section" ? "…" : "capture section"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleScreenshot}
-                  disabled={!!loading}
-                  className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 font-medium hover:bg-slate-800 disabled:opacity-50 text-sm"
-                >
-                  {loading === "screenshot" ? "…" : "full page"}
-                </button>
-              </div>
-            </section>
-
-            {/* 2. Web URL */}
-            <section className="space-y-2">
-              <h2 className="text-white font-medium text-sm">web url</h2>
+            {/* Main Actions Group */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Screenshot */}
               <button
-                type="button"
-                onClick={handleSaveCurrentPage}
+                onClick={handleSectionCapture}
                 disabled={!!loading}
-                className="w-full py-2 rounded-lg border border-slate-600 text-slate-300 font-medium hover:bg-slate-800 disabled:opacity-50"
+                className="brut-card p-4 flex flex-col items-center gap-2 hover:bg-indigo-50 transition-colors group"
               >
-                {loading === "web" ? "…" : "save current page"}
+                <div className="w-10 h-10 bg-indigo-100 border-2 border-black flex items-center justify-center rotate-[-2deg] group-hover:rotate-0 transition-transform">
+                  {loading === "screenshot_section" ? <Loader2 className="animate-spin" /> : <Scissors size={20} />}
+                </div>
+                <span className="font-black uppercase text-[10px] tracking-widest">Section</span>
               </button>
-              <form onSubmit={handleSaveWebUrl} className="flex gap-2">
-                <input
-                  type="url"
-                  value={webUrl}
-                  onChange={(e) => setWebUrl(e.target.value)}
-                  placeholder="or paste a URL"
-                  className="flex-1 px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                />
-                <button
-                  type="submit"
-                  disabled={!!loading || !webUrl.trim()}
-                  className="py-2 px-3 rounded-lg bg-slate-700 text-white font-medium hover:bg-slate-600 disabled:opacity-50"
-                >
-                  save
-                </button>
-              </form>
-            </section>
 
-            {/* 3. YouTube URL */}
-            <section className="space-y-2">
-              <h2 className="text-white font-medium text-sm">youtube</h2>
-              <form onSubmit={handleSaveYoutube} className="flex gap-2">
-                <input
-                  type="url"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="https://youtube.com/…"
-                  className="flex-1 px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm"
-                />
-                <button
-                  type="submit"
-                  disabled={!!loading || !youtubeUrl.trim()}
-                  className="py-2 px-3 rounded-lg bg-slate-700 text-white font-medium hover:bg-slate-600 disabled:opacity-50"
-                >
-                  {loading === "youtube" ? "…" : "save"}
-                </button>
-              </form>
-            </section>
+              <button
+                onClick={handleScreenshot}
+                disabled={!!loading}
+                className="brut-card p-4 flex flex-col items-center gap-2 hover:bg-emerald-50 transition-colors group"
+              >
+                <div className="w-10 h-10 bg-emerald-100 border-2 border-black flex items-center justify-center rotate-[2deg] group-hover:rotate-0 transition-transform">
+                  {loading === "screenshot" ? <Loader2 className="animate-spin" /> : <Camera size={20} />}
+                </div>
+                <span className="font-black uppercase text-[10px] tracking-widest">Full Tab</span>
+              </button>
+            </div>
 
-            {/* 4. Text */}
-            <section className="space-y-2">
-              <h2 className="text-white font-medium text-sm">text</h2>
-              <form onSubmit={handleSaveText} className="space-y-2">
+            {/* Content Groupings */}
+            <div className="space-y-4">
+              {/* Web URL */}
+              <div className="brut-card bg-white p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Globe size={14} className="text-indigo-600" />
+                  <span className="font-black uppercase text-[10px] tracking-widest">Web stream</span>
+                </div>
+                <button
+                  onClick={handleSaveCurrentPage}
+                  disabled={!!loading}
+                  className="brut-button w-full py-2 bg-indigo-500 text-[10px]"
+                >
+                  {loading === "web" ? <Loader2 size={16} className="animate-spin mx-auto" /> : "CAPTURE CURRENT PAGE"}
+                </button>
+                <form onSubmit={handleSaveWebUrl} className="relative">
+                  <input
+                    type="url"
+                    value={webUrl}
+                    onChange={(e) => setWebUrl(e.target.value)}
+                    placeholder="PASTE URL..."
+                    className="brut-input pr-12 h-10"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!!loading || !webUrl.trim()}
+                    className="absolute right-1 top-1 bottom-1 px-3 bg-black text-white font-black text-[9px] uppercase border-l-2 border-black hover:bg-indigo-600 transition-colors"
+                  >
+                    GO
+                  </button>
+                </form>
+              </div>
+
+              {/* YouTube */}
+              <div className="brut-card bg-white p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Youtube size={14} className="text-rose-500" />
+                  <span className="font-black uppercase text-[10px] tracking-widest">Video link</span>
+                </div>
+                <form onSubmit={handleSaveYoutube} className="relative">
+                  <input
+                    type="url"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    placeholder="YOUTUBE LINK..."
+                    className="brut-input pr-12 h-10"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!!loading || !youtubeUrl.trim()}
+                    className="absolute right-1 top-1 bottom-1 px-3 bg-rose-500 text-white font-black text-[9px] uppercase border-l-2 border-black hover:bg-rose-600 transition-colors"
+                  >
+                    SYNC
+                  </button>
+                </form>
+              </div>
+
+              {/* Text Note */}
+              <div className="brut-card bg-white p-4 space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <FileText size={14} className="text-amber-500" />
+                  <span className="font-black uppercase text-[10px] tracking-widest">Quick note</span>
+                </div>
                 <textarea
                   value={pastedText}
                   onChange={(e) => setPastedText(e.target.value)}
-                  placeholder="paste text…"
-                  rows={4}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-600 bg-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-y text-sm"
+                  placeholder="PASTE SNIPPET..."
+                  rows={2}
+                  className="brut-input text-xs lowercase h-20"
                 />
                 <button
-                  type="submit"
+                  onClick={handleSaveText}
                   disabled={!!loading || !pastedText.trim()}
-                  className="w-full py-2.5 rounded-lg bg-slate-700 text-white font-medium hover:bg-slate-600 disabled:opacity-50"
+                  className="brut-button w-full py-2 bg-amber-400 text-black text-[10px]"
                 >
-                  {loading === "text" ? "…" : "save as text memory"}
+                  {loading === "text" ? <Loader2 size={16} className="animate-spin mx-auto" /> : "SAVE TEXT CORE"}
                 </button>
-              </form>
-            </section>
+              </div>
+            </div>
 
-            {error && <p className="text-red-400 text-xs">{error}</p>}
-            {success && (
-              <p className="text-green-400 text-xs">saved. processing in background.</p>
+            {/* Status Footer */}
+            {(error || success) && (
+              <div className={`p-3 border-2 border-black shadow-[2px_2px_0px_0px_black] flex items-center gap-2 ${error ? "bg-rose-50 text-rose-700" : "bg-emerald-50 text-emerald-700"
+                }`}>
+                {error ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
+                <p className="font-black uppercase text-[9px] tracking-widest">
+                  {error || "Synchronization Complete."}
+                </p>
+              </div>
             )}
           </>
         )}
       </div>
+
+      {/* Footer Branding */}
+      <footer className="px-4 py-3 bg-white border-t-2 border-black text-center">
+        <p className="font-black uppercase text-[8px] tracking-[0.2em] text-gray-400">
+          SYNAPSE CORP.
+        </p>
+      </footer>
     </div>
   );
 }
