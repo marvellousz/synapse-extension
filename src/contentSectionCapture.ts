@@ -147,10 +147,16 @@ function createOverlay(): {
     cancelCb = cb;
   };
 
-  captureBtn.addEventListener("click", () => {
+  captureBtn.addEventListener("click", (event) => {
+    // Prevent overlay drag handlers from seeing button interactions.
+    event.stopPropagation();
     if (currentRect && currentRect.w > 0 && currentRect.h > 0) captureCb();
   });
-  cancelBtn.addEventListener("click", cancelCb);
+  cancelBtn.addEventListener("click", (event) => {
+    // Keep callback dynamic so later onCancel assignment is respected.
+    event.stopPropagation();
+    cancelCb();
+  });
 
   buttons.appendChild(captureBtn);
   buttons.appendChild(cancelBtn);
