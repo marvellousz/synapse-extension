@@ -43,7 +43,34 @@ export function getCurrentTabId(): Promise<number | null> {
   });
 }
 
-export function sendToBackground(msg: { action: string; tabId?: number; title?: string | null }): Promise<{ ok?: boolean; error?: string }> {
+export function getYoutubeVideoTime(tabId: number): Promise<number | null> {
+  return new Promise((resolve) => {
+    if (!chrome?.scripting) {
+      resolve(null);
+      return;
+    }
+    ((chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => {
+        const video = document.querySelector("video");
+        return video ? Math.floor(video.currentTime) : null;
+      },
+    } as any) as unknown) as Promise<any[]>)
+      .then((results) => {
+        if (!results || !results[0]) {
+          resolve(null);
+          return;
+        }
+        resolve(results[0].result as number | null);
+      })
+      .catch((err) => {
+        console.error("executeScript error", err);
+        resolve(null);
+      });
+  });
+}
+
+export function sendToBackground(msg: { action: string; tabId?: number; title?: string | null; sourceUrl?: string }): Promise<{ ok?: boolean; error?: string; cancelled?: boolean }> {
   return new Promise((resolve) => {
     if (!chrome?.runtime?.sendMessage) {
       resolve({ ok: false, error: "Extension API not available" });
@@ -54,7 +81,7 @@ export function sendToBackground(msg: { action: string; tabId?: number; title?: 
         resolve({ ok: false, error: chrome.runtime.lastError.message });
         return;
       }
-      const r = response as { ok?: boolean; error?: string } | undefined;
+      const r = response as { ok?: boolean; error?: string; cancelled?: boolean } | undefined;
       resolve(r ?? { ok: false });
     });
   });

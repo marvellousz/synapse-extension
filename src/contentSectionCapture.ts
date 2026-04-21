@@ -214,6 +214,12 @@ function run() {
   chrome!.runtime!.onMessage!.addListener(
     (msg: unknown, _sender: unknown, sendResponse: (r: { dataUrl?: string; error?: string }) => void) => {
       const m = msg as { action: string; dataUrl?: string; rect?: Rect; devicePixelRatio?: number };
+      if (m.action === "stopSelection") {
+        overlayApi?.destroy();
+        overlayApi = null;
+        chrome!.runtime!.sendMessage!({ action: "selectionCancelled" });
+        return;
+      }
       if (m.action === "cropImage" && m.dataUrl && m.rect != null && m.devicePixelRatio != null) {
         cropImageToDataUrl(m.dataUrl, m.rect, m.devicePixelRatio)
           .then((dataUrl) => sendResponse({ dataUrl }))
