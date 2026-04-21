@@ -67,8 +67,13 @@ async function uploadFile(token: string, memoryId: string, blob: Blob): Promise<
 }
 
 chrome!.runtime!.onMessage!.addListener(
-  (msg: unknown, _sender: unknown, sendResponse: (r: { ok?: boolean; error?: string }) => void) => {
-    const m = msg as { action: string; tabId?: number; title?: string | null };
+  (msg: unknown, _sender: unknown, sendResponse: (r: { ok?: boolean; error?: string; cancelled?: boolean }) => void) => {
+    const m = msg as { action: string; tabId?: number; title?: string | null; sourceUrl?: string };
+    if (m.action === "cancelSectionCapture" && m.tabId != null) {
+      chrome!.tabs!.sendMessage!(m.tabId, { action: "stopSelection" });
+      sendResponse({ ok: true });
+      return false;
+    }
     if (m.action !== "startSectionCapture" || m.tabId == null) return false;
 
     const tabId = m.tabId;
@@ -117,7 +122,7 @@ chrome!.runtime!.onMessage!.addListener(
 
       const region = await regionPromise;
       if (region === "cancelled") {
-        sendResponse({ ok: true });
+        sendResponse({ ok: true, cancelled: true });
         return;
       }
 
