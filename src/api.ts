@@ -106,18 +106,29 @@ function generateContentHash(): string {
   return `hash-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
+function isYoutubeUrl(sourceUrl: string): boolean {
+  return /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)/i.test(
+    sourceUrl
+  );
+}
+
+function resolveWebpageType(sourceUrl: string): MemoryType {
+  return isYoutubeUrl(sourceUrl) ? "youtube" : "webpage";
+}
+
 export function buildCreateBody(
   type: MemoryType,
   title: string,
   summary: string,
   sourceUrl: string
 ): MemoryCreate {
+  const routedType = type === "webpage" && sourceUrl.trim() ? resolveWebpageType(sourceUrl) : type;
   return {
-    type,
+    type: routedType,
     contentHash: generateContentHash(),
     title: title || null,
     summary: summary || null,
-    sourceUrl: type === "webpage" || type === "youtube" ? (sourceUrl || null) : null,
+    sourceUrl: routedType === "webpage" || routedType === "youtube" ? (sourceUrl || null) : null,
     status: "processing",
   };
 }
